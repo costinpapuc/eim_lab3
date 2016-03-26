@@ -15,9 +15,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class PhoneDialerActivity extends AppCompatActivity {
-    public static final String encodedHash = Uri.encode("#");
+    final public static int CONTACTS_MANAGER_REQUEST_CODE = 1;
     final public static int[] buttonIds = {
             R.id.number_0_button,
             R.id.number_1_button,
@@ -38,6 +39,22 @@ public class PhoneDialerActivity extends AppCompatActivity {
     private BackspaceButtonClickListener backspaceButtonClickListener = new BackspaceButtonClickListener();
     private CallButtonClickListener callButtonClickListener = new CallButtonClickListener();
     private HangupButtonClickListener hangupButtonClickListener = new HangupButtonClickListener();
+    private ContactsButtonClickListener contactsButtonClickListener = new ContactsButtonClickListener();
+
+
+    private class ContactsButtonClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            String phoneNumber = phoneNumberEditText.getText().toString();
+            if (phoneNumber.length() > 0) {
+                Intent intent = new Intent("com.costinpapuc.contactsmanager.intent.action.ContactsManagerActivity");
+                intent.putExtra("com.costinpapuc.contactsmanager.PHONE_NUMBER_KEY", phoneNumber);
+                startActivityForResult(intent, CONTACTS_MANAGER_REQUEST_CODE);
+            } else {
+                Toast.makeText(getApplication(), getResources().getString(R.string.phone_number_error), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
     private class NumberButtonClickListener implements View.OnClickListener {
         @Override
@@ -98,5 +115,8 @@ public class PhoneDialerActivity extends AppCompatActivity {
         callImageButton.setOnClickListener(callButtonClickListener);
         ImageButton hangupImageButton = (ImageButton)findViewById(R.id.hangup_button);
         hangupImageButton.setOnClickListener(hangupButtonClickListener);
+        ImageButton contactsImageButton = (ImageButton)findViewById(R.id.contacts_button);
+        contactsImageButton.setOnClickListener(contactsButtonClickListener);
+
     }
 }
